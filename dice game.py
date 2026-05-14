@@ -1,6 +1,8 @@
 import random
 # this is a recreation of what ive made in CS20 "dice game"
 
+# now adding a lucky chance to "find" a chip/coin
+
 # ----------------------------
 # INPUT VALIDATION FUNCTION
 # ----------------------------
@@ -34,16 +36,27 @@ def play_round(balance):
     # Player choices
     dice_count = get_valid_number(
         "How many dice would you like to roll? (0 to quit): ",
-        1
+        1,
+        balance # To limit amount of dice rolled equal to balance
     )
+
+    if dice_count <= 0:
+        print("Invalid dice count.")
+        return balance, False
 
     if dice_count == 0:
         return balance, True
 
     side_count = get_valid_number(
-        "How many sides should the dice have? ",
-        2
+        "How many sides should the dice have? (min 2): ",
+        2,
+        1000
     )
+
+    # 🔴 SAFETY CHECK (IMPORTANT)
+    if side_count < 2:
+        print("Invalid dice sides. Round cancelled.")
+        return balance, False
 
     guess = get_valid_number(
         f"Choose a guess between 1 and {side_count}: ",
@@ -52,17 +65,25 @@ def play_round(balance):
     )
 
     # Extension: variable wager
-    max_wager = balance // dice_count
+    max_wager = max(1, balance // dice_count)
+
+    if max_wager < 1:
+        print("Wager too small to play.")
 
     wager = get_valid_number(
-        f"Enter wager per die (Max ${max_wager}): ",
+        f"Enter wager per die (Min $1, Max ${max_wager}): ",
         1,
         max_wager
     )
 
+    if wager == 0:
+        print("Wager cannot be 0. Setting automatically to $1")
+        wager = 1
+
     total_gain = 0
     correct_dice = 0
     incorrect_dice = 0
+    winnings = 0
 
     print("\nRolling dice...\n")
 
@@ -75,11 +96,10 @@ def play_round(balance):
 
         if roll == guess:
 
-            winnings = wager * side_count
-            total_gain += winnings
+            total_gain += wager
             correct_dice += 1
 
-            print("Correct guess! You won $", winnings)
+            print("Correct guess! You won $", wager)
 
         else:
 
@@ -101,7 +121,60 @@ def play_round(balance):
     else:
         print("Total Loss: $", abs(total_gain))
 
-    print("New Balance: $", balance)
+    
+ 
+    # ----------------------------
+    # RANDOM EVENT SYSTEM
+    # ----------------------------
+
+    lucky_chance = random.randint(1, 100)
+
+    # 50% chance
+    if lucky_chance <= 50:
+
+        print("\nNothing special happened this round.")
+
+    # 30% chance
+    elif lucky_chance <= 80:
+
+        small_bonus = random.randint(5, 15)
+
+        print("\n🍀 SMALL FIND!")
+        print("You found a casino chip worth $", small_bonus)
+
+        balance += small_bonus
+
+    # 15% chance
+    elif lucky_chance <= 95:
+
+        medium_bonus = random.randint(20, 50)
+
+        print("\n💎 BIG FIND!")
+        print("A high-value poker chip was found worth $", medium_bonus)
+
+        balance += medium_bonus
+    
+    #chance to lose chips
+    elif lucky_chance <= 98:
+
+        penalty = random.randint(10, 75)
+
+        print("\n💀 BAD LUCK!")
+        print("You dropped chips worth $", penalty)
+
+        balance -= penalty
+
+    # 5% chance
+    else:
+
+        jackpot = random.randint(150, 1000)
+
+        print("\n🎰 JACKPOT FIND!!!")
+        print("The highest value chip in the casino was found worth $", jackpot)
+
+        balance += jackpot
+
+    print("\nNew Balance: $", balance)
 
     return balance, False
 
@@ -122,7 +195,7 @@ def main():
         total_losses = 0
 
         print("================================")
-        print("WELCOME TO THE DICE BETTING GAME")
+        print("WELCOME TO THE DICE GAME BY RUBEN")
         print("================================")
 
         game_over = False
