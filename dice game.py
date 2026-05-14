@@ -1,0 +1,153 @@
+import random
+# this is a recreation of what ive made in CS20 "dice game"
+
+# ----------------------------
+# INPUT VALIDATION FUNCTION
+# ----------------------------
+def get_valid_number(prompt, minimum, maximum=999999):
+
+    while True:
+        number = int(input(prompt))
+
+        if number == 0:
+            return 0
+
+        if minimum <= number <= maximum:
+            return number
+
+        print("Invalid input. Try again.")
+
+
+# ----------------------------
+# SINGLE ROUND FUNCTION
+# ----------------------------
+def play_round(balance):
+
+    print("\n--- New Round ---")
+    print("Current Balance: $", balance)
+
+    # Player choices
+    dice_count = get_valid_number(
+        "How many dice would you like to roll? (0 to quit): ",
+        1
+    )
+
+    if dice_count == 0:
+        return balance, True
+
+    side_count = get_valid_number(
+        "How many sides should the dice have? ",
+        2
+    )
+
+    guess = get_valid_number(
+        f"Choose a guess between 1 and {side_count}: ",
+        1,
+        side_count
+    )
+
+    # Extension: variable wager
+    max_wager = balance // dice_count
+
+    wager = get_valid_number(
+        f"Enter wager per die (Max ${max_wager}): ",
+        1,
+        max_wager
+    )
+
+    total_gain = 0
+    correct_dice = 0
+    incorrect_dice = 0
+
+    print("\nRolling dice...\n")
+
+    # Roll each die
+    for roll_number in range(1, dice_count + 1):
+
+        roll = random.randint(1, side_count)
+
+        print(f"Die {roll_number}: {roll}")
+
+        if roll == guess:
+
+            winnings = wager * side_count
+            total_gain += winnings
+            correct_dice += 1
+
+            print("Correct guess! You won $", winnings)
+
+        else:
+
+            total_gain -= wager
+            incorrect_dice += 1
+
+            print("Incorrect guess! You lost $", wager)
+
+    # Update balance
+    balance += total_gain
+
+    # Round summary
+    print("\n--- Round Summary ---")
+    print("Correct Dice:", correct_dice)
+    print("Incorrect Dice:", incorrect_dice)
+
+    if total_gain >= 0:
+        print("Total Profit: $", total_gain)
+    else:
+        print("Total Loss: $", abs(total_gain))
+
+    print("New Balance: $", balance)
+
+    return balance, False
+
+
+# ----------------------------
+# MAIN GAME FUNCTION
+# ----------------------------
+def main():
+
+    balance = 100
+
+    total_rounds = 0
+    total_profit = 0
+    total_losses = 0
+
+    print("================================")
+    print("WELCOME TO THE DICE BETTING GAME")
+    print("================================")
+
+    game_over = False
+
+    while balance > 0 and not game_over:
+
+        old_balance = balance
+
+        balance, game_over = play_round(balance)
+
+        round_change = balance - old_balance
+
+        if round_change > 0:
+            total_profit += round_change
+        else:
+            total_losses += abs(round_change)
+
+        total_rounds += 1
+
+    # End game summary
+    print("\n================================")
+    print("GAME OVER")
+    print("================================")
+
+    print("Final Balance: $", balance)
+    print("Rounds Played:", total_rounds)
+    print("Total Profit: $", total_profit)
+    print("Total Losses: $", total_losses)
+
+    if balance <= 0:
+        print("You ran out of money!")
+    else:
+        print("Thanks for playing!")
+
+
+# Run the program
+main()
