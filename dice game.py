@@ -106,48 +106,51 @@ def play_round(balance):
 # ----------------------------
 def main():
 
-    balance = 100
+    play_again = "y"
 
-    total_rounds = 0
-    total_profit = 0
-    total_losses = 0
+    while play_again == "y":
 
-    print("================================")
-    print("WELCOME TO THE DICE BETTING GAME")
-    print("================================")
+        balance = 100
 
-    game_over = False
+        total_rounds = 0
+        total_profit = 0
+        total_losses = 0
 
-    while balance > 0 and not game_over:
+        print("================================")
+        print("WELCOME TO THE DICE BETTING GAME")
+        print("================================")
 
-        old_balance = balance
+        game_over = False
 
-        balance, game_over = play_round(balance)
+        while balance > 0 and not game_over:
 
-        round_change = balance - old_balance
+            old_balance = balance
 
-        if round_change > 0:
-            total_profit += round_change
-        else:
-            total_losses += abs(round_change)
+            balance, game_over = play_round(balance)
 
-        total_rounds += 1
+            round_change = balance - old_balance
 
-    # End game summary
-    print("\n================================")
-    print("GAME OVER")
-    print("================================")
+            if round_change > 0:
+                total_profit += round_change
+            else:
+                total_losses += abs(round_change)
 
-    print("Final Balance: $", balance)
-    print("Rounds Played:", total_rounds)
-    print("Total Profit: $", total_profit)
-    print("Total Losses: $", total_losses)
+            total_rounds += 1
 
-    if balance <= 0:
-        print("You ran out of money!")
-    else:
-        print("Thanks for playing!")
+        # End game summary
+        print("\n================================")
+        print("GAME OVER")
+        print("================================")
 
+        print("Final Balance: $", balance)
+        print("Rounds Played:", total_rounds)
+        print("Total Profit: $", total_profit)
+        print("Total Losses: $", total_losses)
+
+        # Ask to play again
+        play_again = input("\nWould you like to play again? (Y/N): ").lower()
+
+    print("\nThanks for playing!")
 
 # Run the program
 main()
