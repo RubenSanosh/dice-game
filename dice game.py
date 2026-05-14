@@ -7,15 +7,20 @@ import random
 def get_valid_number(prompt, minimum, maximum=999999):
 
     while True:
-        number = int(input(prompt))
 
-        if number == 0:
-            return 0
+        try:
+            number = int(input(prompt))
 
-        if minimum <= number <= maximum:
-            return number
+            if number == 0:
+                return 0
 
-        print("Invalid input. Try again.")
+            if minimum <= number <= maximum:
+                return number
+
+            print("Invalid range. Try again.")
+
+        except:
+            print("Please enter a WHOLE NUMBER.")
 
 
 # ----------------------------
@@ -149,6 +154,9 @@ def main():
 
         # Ask to play again
         play_again = input("\nWould you like to play again? (Y/N): ").lower()
+
+        while play_again not in ["y", "n"]:
+            play_again = input("Please enter Y or N: ").lower()
 
     print("\nThanks for playing!")
 
